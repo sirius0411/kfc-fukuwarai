@@ -23,25 +23,174 @@ const sprites = {}
 
 const resConfigs = {
     kmr: {
-        full: 'assets/avatar.png',
-        face: 'assets/face.png',
+        full: 'assets/kmr/avatar.png',
+        face: 'assets/kmr/face.png',
         widgets: [
             {
                 name: 'eye-l',
                 hint: 'move left eye',
-                src: 'assets/eye-l.png'
+                src: 'assets/kmr/eye-l.png'
             },
             {
                 name: 'eye-r',
                 hint: 'move right eye',
-                src: 'assets/eye-r.png'
-            }
+                src: 'assets/kmr/eye-r.png'
+            },
+            {
+                name: 'eyebow-l',
+                hint: 'move left eyebow',
+                src: 'assets/kmr/eyebow-l.png'
+            },
+            {
+                name: 'eyebow-r',
+                hint: 'move right eyebow',
+                src: 'assets/kmr/eyebow-r.png'
+            },
+            {
+                name: 'nose',
+                hint: 'move nose',
+                src: 'assets/kmr/nose.png'
+            },
+            {
+                name: 'mouth',
+                hint: 'move mouth',
+                src: 'assets/kmr/mouth1.png'
+            },
+            {
+                name: 'nevus',
+                hint: 'move nevus',
+                src: 'assets/kmr/nevus.png'
+            },
+            {
+                name: 'hairpin',
+                hint: 'move hairpin',
+                src: 'assets/kmr/hairpin.png'
+            },
+            {
+                name: 'ring',
+                hint: 'move ring',
+                src: 'assets/kmr/ring.png'
+            },
+        ],
+    },
+    kmr1: {
+        full: 'assets/kmr/avatar.png',
+        face: 'assets/kmr/face.png',
+        widgets: [
+            {
+                name: 'eye-l',
+                hint: 'move left eye',
+                src: 'assets/kmr/eye-l.png'
+            },
+            {
+                name: 'eye-r',
+                hint: 'move right eye',
+                src: 'assets/kmr/eye-r.png'
+            },
+            {
+                name: 'eyebow-l',
+                hint: 'move left eyebow',
+                src: 'assets/kmr/eyebow-l.png'
+            },
+            {
+                name: 'eyebow-r',
+                hint: 'move right eyebow',
+                src: 'assets/kmr/eyebow-r.png'
+            },
+            {
+                name: 'nose',
+                hint: 'move nose',
+                src: 'assets/kmr/nose.png'
+            },
+            {
+                name: 'mouth',
+                hint: 'move mouth',
+                src: 'assets/kmr/mouth2.png'
+            },
+            {
+                name: 'nevus',
+                hint: 'move nevus',
+                src: 'assets/kmr/nevus.png'
+            },
+            {
+                name: 'hairpin',
+                hint: 'move hairpin',
+                src: 'assets/kmr/hairpin.png'
+            },
+            {
+                name: 'ring',
+                hint: 'move ring',
+                src: 'assets/kmr/ring.png'
+            },
+        ],
+    },
+    kmr2: {
+        full: 'assets/kmr/avatar.png',
+        face: 'assets/kmr/face.png',
+        widgets: [
+            {
+                name: 'eye-l',
+                hint: 'move left eye',
+                src: 'assets/kmr/eye-l.png'
+            },
+            {
+                name: 'eye-r',
+                hint: 'move right eye',
+                src: 'assets/kmr/eye-r.png'
+            },
+            {
+                name: 'eyebow-l',
+                hint: 'move left eyebow',
+                src: 'assets/kmr/eyebow-l.png'
+            },
+            {
+                name: 'eyebow-r',
+                hint: 'move right eyebow',
+                src: 'assets/kmr/eyebow-r.png'
+            },
+            {
+                name: 'nose',
+                hint: 'move nose',
+                src: 'assets/kmr/nose.png'
+            },
+            {
+                name: 'mouth',
+                hint: 'move mouth',
+                src: 'assets/kmr/mouth3.png'
+            },
+            {
+                name: 'nevus',
+                hint: 'move nevus',
+                src: 'assets/kmr/nevus.png'
+            },
+            {
+                name: 'hairpin',
+                hint: 'move hairpin',
+                src: 'assets/kmr/hairpin.png'
+            },
+            {
+                name: 'ring',
+                hint: 'move ring',
+                src: 'assets/kmr/ring.png'
+            },
         ],
     }
 }
 
+const radioListener = (e) => {
+    const id = document.querySelector('.form-check-input:checked').id
+    console.log(`selected id ${id}`)
+    currentConfig = resConfigs[id]
+    gameData.reset()
+    loadSprites(gameData.config)
+}
+for (let i of document.getElementsByClassName('form-check-input')) {
+    i.addEventListener('click', radioListener)
+}
+
+let currentConfig = resConfigs.kmr
 function loadConfig() {
-    return resConfigs.kmr;
+    return currentConfig;
 }
 
 let gameData = {
@@ -63,6 +212,7 @@ let gameData = {
 loadSprites(gameData.config)
 
 function loadSprites(config) {
+    loader.reset()
     loader
         .add(config.full)
         .add(config.face)
