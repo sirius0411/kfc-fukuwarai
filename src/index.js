@@ -206,6 +206,7 @@ let gameData = {
         self.data = {
             index: 0
         }
+        app.stage.removeChildren(0, app.stage.children.length)
     }
 }
 
