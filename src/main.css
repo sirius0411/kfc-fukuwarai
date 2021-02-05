@@ -1,0 +1,21 @@
+body {
+    background-color: beige;
+}
+
+.container {
+    margin-top: 44px;
+}
+
+#hint {
+    margin-left: 12px;
+}
+
+#canvasContainer {
+    margin-top: 12px;
+}
+
+#canvasContainer canvas {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
