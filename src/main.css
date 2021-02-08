@@ -3,14 +3,14 @@ body {
 }
 
 .container {
-    margin-top: 44px;
+    margin-top: 5vmin;
     padding-left: 0;
     padding-right: 0;
 }
 
 #hint {
     margin-left: 12px;
-    display: none;
+    /* display: none; */
 }
 
 #canvasContainer {
@@ -29,4 +29,13 @@ body {
 
 #setGroup {
     display: none;
+}
+
+.preset {
+    margin-bottom: 5vmin;
+}
+
+.preset img {
+    width: 10vmin;
+    height: 10vmin;
 }

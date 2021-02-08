@@ -16,8 +16,8 @@ module.exports = {
     output: {
         filename: '[name].[chunkhash:8].js',
         path: path.resolve(__dirname, 'dist'),
-        // publicPath: '/',
-        publicPath: 'https://cdn.jsdelivr.net/gh/sirius0411/kfc-fukuwarai/dist/',
+        publicPath: '/',
+        // publicPath: 'https://cdn.jsdelivr.net/gh/sirius0411/kfc-fukuwarai/dist/',
     },
     externalsType: 'script',
     externals: {
@@ -64,5 +64,27 @@ module.exports = {
             new OptimizeCssAssetsWebpackPlugin(),
             new TerserPlugin()
         ]
-    }
+    },
+    resolve: {
+        fallback: {
+          "fs": false,
+          "tls": false,
+          "net": false,
+          "path": false,
+          "zlib": false,
+          "http": false,
+          "https": false,
+          "stream": false,
+          "crypto": false,
+          "util": false,
+          "buffer": false,
+          "vm": false,
+          "ps": false,
+          "constants": false,
+          "assert": false,
+          "os": false,
+          "child_process": false,
+          "worker_threads": false,
+        } 
+      },
 };
