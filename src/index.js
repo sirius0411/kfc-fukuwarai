@@ -8,9 +8,16 @@ const States = {
     END: 'end',
 }
 
+const standardSize = 512
+const canvasSize = Math.min(window.innerWidth, standardSize)
+const ratio = canvasSize / standardSize
+
+console.log(`global scale ratio ${ratio}`)
+// console.log(window.innerWidth, document.getElementsByClassName('container')[0].clientWidth, document.getElementById('canvasContainer').clientWidth)
+
 const app = new PIXI.Application({
-    width: 512,
-    height: 512,
+    width: canvasSize,
+    height: canvasSize,
     antialias: true,
     backgroundColor: 0xffffff
 })
@@ -32,9 +39,9 @@ const resConfigs = {
                 src: 'assets/kmr/eye-l.png'
             },
             {
-                name: 'eye-r',
-                hint: 'move right eye',
-                src: 'assets/kmr/eye-r.png'
+                name: 'hairpin',
+                hint: 'move hairpin',
+                src: 'assets/kmr/hairpin.png'
             },
             {
                 name: 'eyebow-l',
@@ -42,19 +49,24 @@ const resConfigs = {
                 src: 'assets/kmr/eyebow-l.png'
             },
             {
-                name: 'eyebow-r',
-                hint: 'move right eyebow',
-                src: 'assets/kmr/eyebow-r.png'
-            },
-            {
                 name: 'nose',
                 hint: 'move nose',
                 src: 'assets/kmr/nose.png'
             },
             {
-                name: 'mouth',
+                name: 'mouth2',
                 hint: 'move mouth',
-                src: 'assets/kmr/mouth1.png'
+                src: 'assets/kmr/mouth2.png'
+            },
+            {
+                name: 'eye-r',
+                hint: 'move right eye',
+                src: 'assets/kmr/eye-r.png'
+            },
+            {
+                name: 'rouge-r',
+                hint: 'move right rouge',
+                src: 'assets/kmr/rouge-r.png'
             },
             {
                 name: 'nevus',
@@ -62,14 +74,24 @@ const resConfigs = {
                 src: 'assets/kmr/nevus.png'
             },
             {
-                name: 'hairpin',
-                hint: 'move hairpin',
-                src: 'assets/kmr/hairpin.png'
+                name: 'mouth4',
+                hint: 'move mouth',
+                src: 'assets/kmr/mouth4.png'
             },
             {
                 name: 'ring',
                 hint: 'move ring',
                 src: 'assets/kmr/ring.png'
+            },
+            {
+                name: 'rouge-l',
+                hint: 'move left rouge',
+                src: 'assets/kmr/rouge-l.png'
+            },
+            {
+                name: 'eyebow-r',
+                hint: 'move right eyebow',
+                src: 'assets/kmr/eyebow-r.png'
             },
         ],
     },
@@ -198,13 +220,15 @@ let gameData = {
     config: loadConfig(),
     data: {
         index: 0,
+        widgetStates: {},
     },
     reset: function() {
         const self = this
         self.state = States.IDLE,
         self.config = loadConfig();
         self.data = {
-            index: 0
+            index: 0,
+            widgetStates: {},
         }
         app.stage.removeChildren(0, app.stage.children.length)
     }
@@ -226,15 +250,23 @@ function loadSprites(config) {
     })
 }
 
+function applyScale(sprite) {
+    sprite.anchor.set(0.5)
+    sprite.scale.set(ratio, ratio)
+}
+
 function onResourceReady(resources, config) {
     sprites.full = new Sprite(resources[config.full].texture)
+    sprites.full.scale.set(ratio, ratio)
     app.stage.addChild(sprites.full)
     sprites.face = new Sprite(resources[config.face].texture)
     sprites.face.visible = false
+    sprites.face.scale.set(ratio, ratio)
     app.stage.addChild(sprites.face)
     sprites.widgets = []
     for (let i of config.widgets) {
         const itemSprite = new Sprite(resources[i.src].texture)
+        itemSprite.name = i.name
         itemSprite.visible = false
         itemSprite.interactive = true
         itemSprite.buttonMode = true
@@ -250,6 +282,7 @@ function onResourceReady(resources, config) {
             .on('touchendoutside', onDragEnd)
             .on('mousemove', onDragMove)
             .on('touchmove', onDragMove)
+        applyScale(itemSprite)
         sprites.widgets.push(itemSprite)
         app.stage.addChild(itemSprite)
     }
@@ -270,17 +303,28 @@ const action = document.getElementById('action')
 function setButtonText(content) {
     action.innerText = content
 }
-action.addEventListener('click', () => {
+action.addEventListener('click', (e) => {
     switch (gameData.state) {
         case States.IDLE:
             gameData.state = States.ITEM
             gameData.data.index = 0
+            gameData.data.widgetStates = {}
             setButtonText('Next')
             setHint(gameData.config.widgets[0].hint)
 
-            console.log(app.stage.getChildIndex(sprites.full), app.stage.getChildIndex(sprites.face))
+            // console.log(app.stage.getChildIndex(sprites.full), app.stage.getChildIndex(sprites.face))
             break
         case States.ITEM:
+            const currentSpriteName = gameData.config.widgets[gameData.data.index].name
+            if (!gameData.data.widgetStates[currentSpriteName]) {
+                gameData.data.widgetStates[currentSpriteName] = 'done'
+            }
+            if (e.target.innerText == 'Finish') {
+                gameData.state = States.END
+                setButtonText('Restart')
+                setHint('')
+                return
+            }
             const next = gameData.data.index + 1
             if (next >= gameData.config.widgets.length) {
                 gameData.state = States.END
@@ -309,9 +353,37 @@ action.addEventListener('click', () => {
     }
 })
 
+const skip = document.getElementById('skip')
+skip.addEventListener('click', (e) => {
+    const currentSpriteName = gameData.config.widgets[gameData.data.index].name
+    gameData.data.widgetStates[currentSpriteName] = 'skip'
+    let next = gameData.data.index + 1
+    if (next >= gameData.config.widgets.length) {
+        for (let i = 0; i < gameData.config.widgets.length; i++) {
+            const item = gameData.config.widgets[i].name
+            if (!gameData.data.widgetStates[item] || gameData.data.widgetStates[item] == 'skip') {
+                next = i
+                break
+            }
+        }
+    }
+    console.log(`skip next index ${next}`)
+    if (next >= gameData.config.widgets.length) {
+        skip.hidden = true
+        return
+    }
+    if (next == gameData.config.widgets.length - 1) {
+        // last widgets
+        setButtonText('Finish')
+    }
+    gameData.data.index = next
+    setHint(gameData.config.widgets[next].hint)
+})
+
 function render() {
     switch (gameData.state) {
         case States.IDLE:
+            skip.hidden = true
             for (let i of app.stage.children) {
                 if (i === sprites.full) {
                     if (!sprites.full.visible) {
@@ -323,6 +395,7 @@ function render() {
             }
             break
         case States.ITEM:
+            skip.hidden = false
             const currentSprite = sprites.widgets[gameData.data.index]
             currentSprite.interactive = true
             for (let i of app.stage.children) {
@@ -336,11 +409,20 @@ function render() {
             }
             break
         case States.END:
+            skip.hidden = true
             for (let i of app.stage.children) {
                 if (i === sprites.full) {
                     i.visible = false
                 } else {
-                    i.visible = true
+                    if (i.name) {
+                        if (gameData.data.widgetStates[i.name] == 'done') {
+                            i.visible = true
+                        } else {
+                            i.visible = false
+                        }
+                    } else {
+                        i.visible = true
+                    }
                     i.interactive = false
                 }
             }

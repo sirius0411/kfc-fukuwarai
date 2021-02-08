@@ -16,7 +16,8 @@ module.exports = {
     output: {
         filename: '[name].[chunkhash:8].js',
         path: path.resolve(__dirname, 'dist'),
-        publicPath: '/',
+        // publicPath: '/',
+        publicPath: 'https://cdn.jsdelivr.net/gh/sirius0411/kfc-fukuwarai/dist/',
     },
     externalsType: 'script',
     externals: {
