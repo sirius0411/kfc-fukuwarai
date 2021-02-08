@@ -537,7 +537,7 @@ function onDragMove()
 }
 
 function randomOverAudio() {
-    let url = GameOverAudios[Math.floor(Math.random() * items.length)]
+    let url = GameOverAudios[Math.floor(Math.random() * GameOverAudios.length)]
     if (!url) {
         url = GameOverAudios[0]
     }
